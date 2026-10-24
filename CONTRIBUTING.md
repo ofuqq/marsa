@@ -16,6 +16,8 @@ Read:
 
 Check whether an existing issue covers the change. For a large design change, open a proposal or an ADR before writing a large patch.
 
+Automated labeling maps changed paths to area labels. When a pull request references an issue with "Closes #N" or "Fixes #N", automation copies that issue's labels and milestone to the pull request.
+
 ## 2. Current contribution workflow
 
 1. Fork the repository or create a focused branch.
