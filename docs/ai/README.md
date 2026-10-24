@@ -17,7 +17,7 @@
 
 ## What agents are allowed to do
 
-- Read the repository and the read-only prior analysis at `../../ofuq-openship-analysis`.
+- Read the repository and the read-only prior analysis notes kept outside this repository.
 - Edit documentation, issue drafts, templates, scripts, and future product code.
 - Run local builds, tests, linters, and dry-run automation.
 - Ask the user only when genuinely blocked; otherwise choose the smallest option consistent with the PRD and mark it **PROPOSED**.

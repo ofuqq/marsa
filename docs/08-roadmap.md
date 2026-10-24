@@ -3,7 +3,7 @@
 > Status: **APPROVED** (Phase 2, 2026-10-22); MVP cut line added in Phase 7
 > Date: 2026-10-22
 > Depends on: [`00-vision.md`](00-vision.md), [`01-product-requirements.md`](01-product-requirements.md), [`02-differentiation.md`](02-differentiation.md)
-> Architecture baseline: prior analysis [`03-architecture.md`](../../ofuq-openship-analysis/03-architecture.md), [`04-dotnet-solution-structure.md`](../../ofuq-openship-analysis/04-dotnet-solution-structure.md), [`05-data-model-and-api.md`](../../ofuq-openship-analysis/05-data-model-and-api.md)
+> Architecture baseline: prior analysis notes on architecture, solution structure, data model, and API (kept outside this repository)
 
 ## 1. Product frame
 

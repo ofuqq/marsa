@@ -11,13 +11,6 @@
       ".opencode/skills"
     ]
   },
-  "references": {
-    "openship-analysis": {
-      "path": "../ofuq-openship-analysis",
-      "description": "Read-only prior analysis of Openship. Never copy code, prose, schemas, or assets from it.",
-      "hidden": true
-    }
-  },
   "permission": {
     "edit": "allow",
     "bash": {

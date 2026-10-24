@@ -6,7 +6,7 @@
 > Product name: **Marsa** (مرسى)
 > Tagline: **Where your code docks.**
 > Canonical names, handles, and identifiers: [`00-identity.md`](00-identity.md)
-> Prior analysis: [`../../ofuq-openship-analysis/`](../../ofuq-openship-analysis/) — especially `03-architecture.md`, `06-roadmap-and-mvp.md`, and `08-license-notes.md`.
+> Prior analysis: a separate read-only analysis bundle, especially architecture, roadmap, and license notes. Links are intentionally omitted because that bundle is local to the maintainer and is not part of this repository.
 
 **Legend.** **VERIFIED** = checked in a public registry or document on the date shown. **INFERRED** = a conclusion drawn from the prior analysis. **PROPOSED** = a Marsa decision that is not confirmed yet. **UNKNOWN** = not checked or not knowable from here.
 

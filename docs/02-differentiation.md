@@ -374,7 +374,7 @@ All links were checked on **2026-10-22**. Product pages change; re-check before 
 | [Openship — features](https://openship.io/features) | Multi-stack, Compose, databases, mail, domains/TLS, logs, rollback, interfaces, MCP |
 | [Openship — deploy anywhere](https://openship.io/features/deploy-anywhere) | Cloud/self-hosted, SSH targets, multi-server, .NET listed among stacks |
 | [Openship repository](https://github.com/oblien/openship) | Apache-2.0 platform license; public feature claims |
-| [Prior Openship analysis, `08-license-notes.md`](../../ofuq-openship-analysis/08-license-notes.md) | GPLv3 mail-engine boundary in the analyzed checkout |
+| Prior Openship analysis, license notes | GPLv3 mail-engine boundary in the analyzed checkout |
 | [Coolify — what is Coolify](https://coolify.io/docs/core/what-is-coolify) | Self-hosted/cloud model, connected servers, Docker workloads, responsibility boundary |
 | [Coolify repository](https://github.com/coollabsio/coolify) | Apache-2.0 license; 360+ services claim; multi-server and feature scope |
 | [Dokku](https://dokku.com/) | Single-host Heroku-style PaaS, buildpacks, plugins, CLI |
