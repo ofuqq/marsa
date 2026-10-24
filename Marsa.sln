@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marsa.Domain.Tests", "tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marsa.Application.Tests", "tests\Marsa.Application.Tests\Marsa.Application.Tests.csproj", "{EC6A6572-2AAC-449E-87CD-8D88DB7C4529}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marsa.Server.Tests", "tests\Marsa.Server.Tests\Marsa.Server.Tests.csproj", "{C5126F71-2D16-4307-966B-042B34005968}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,18 @@ Global
 		{EC6A6572-2AAC-449E-87CD-8D88DB7C4529}.Release|x64.Build.0 = Release|Any CPU
 		{EC6A6572-2AAC-449E-87CD-8D88DB7C4529}.Release|x86.ActiveCfg = Release|Any CPU
 		{EC6A6572-2AAC-449E-87CD-8D88DB7C4529}.Release|x86.Build.0 = Release|Any CPU
+		{C5126F71-2D16-4307-966B-042B34005968}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5126F71-2D16-4307-966B-042B34005968}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5126F71-2D16-4307-966B-042B34005968}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C5126F71-2D16-4307-966B-042B34005968}.Debug|x64.Build.0 = Debug|Any CPU
+		{C5126F71-2D16-4307-966B-042B34005968}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C5126F71-2D16-4307-966B-042B34005968}.Debug|x86.Build.0 = Debug|Any CPU
+		{C5126F71-2D16-4307-966B-042B34005968}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5126F71-2D16-4307-966B-042B34005968}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5126F71-2D16-4307-966B-042B34005968}.Release|x64.ActiveCfg = Release|Any CPU
+		{C5126F71-2D16-4307-966B-042B34005968}.Release|x64.Build.0 = Release|Any CPU
+		{C5126F71-2D16-4307-966B-042B34005968}.Release|x86.ActiveCfg = Release|Any CPU
+		{C5126F71-2D16-4307-966B-042B34005968}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,5 +156,6 @@ Global
 		{CD8A644E-4F08-478C-884B-69595084B418} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{C439B97E-33DC-45FF-BC11-5B2E31CE1F84} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{EC6A6572-2AAC-449E-87CD-8D88DB7C4529} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{C5126F71-2D16-4307-966B-042B34005968} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal
