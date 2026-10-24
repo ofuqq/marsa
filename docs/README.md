@@ -87,6 +87,18 @@ The ADR index contains the status and summary of each decision. Every ADR below 
 | [`backlog/README.md`](backlog/README.md) | Issue format, workflow, coverage rules, sizing, milestone corrections |
 | [`backlog/coverage.md`](backlog/coverage.md) | Requirement-to-issue and story-to-issue coverage |
 | [`backlog/milestones.md`](backlog/milestones.md) | Issue counts and dependency order by milestone |
+| [`backlog/epics/`](backlog/epics/) | Epic index files generated from issue frontmatter |
+| [`backlog/epics/E0.md`](backlog/epics/E0.md) | Epic E0 issue grouping |
+| [`backlog/epics/E1.md`](backlog/epics/E1.md) | Epic E1 issue grouping |
+| [`backlog/epics/E2.md`](backlog/epics/E2.md) | Epic E2 issue grouping |
+| [`backlog/epics/E3.md`](backlog/epics/E3.md) | Epic E3 issue grouping |
+| [`backlog/epics/E4.md`](backlog/epics/E4.md) | Epic E4 issue grouping |
+| [`backlog/epics/E5.md`](backlog/epics/E5.md) | Epic E5 issue grouping |
+| [`backlog/epics/E6.md`](backlog/epics/E6.md) | Epic E6 issue grouping |
+| [`backlog/epics/E7.md`](backlog/epics/E7.md) | Epic E7 issue grouping |
+| [`backlog/epics/E8.md`](backlog/epics/E8.md) | Epic E8 issue grouping |
+| [`backlog/epics/E9.md`](backlog/epics/E9.md) | Epic E9 issue grouping |
+| [`backlog/epics/E10.md`](backlog/epics/E10.md) | Epic E10 issue grouping |
 
 ### M0 — walking skeleton
 
