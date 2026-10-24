@@ -10,7 +10,7 @@ body:
     attributes:
       label: Location
       description: File or section that needs work.
-      placeholder: "docs/03-architecture.md §8"
+      placeholder: "docs/architecture/overview.md §8"
     validations:
       required: true
   - type: textarea
@@ -39,5 +39,5 @@ body:
       options:
         - label: The change preserves the canonical names Marsa, Ofuq, and ofuqq.
           required: true
-        - label: New claims are marked VERIFIED, INFERRED, PROPOSED, or UNKNOWN where needed.
+        - label: New claims cite their evidence source.
           required: true

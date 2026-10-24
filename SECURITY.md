@@ -97,8 +97,8 @@ When Marsa is released:
 - review the audit log and deployment history;
 - do not run untrusted images or Dockerfiles on a host that holds unrelated secrets.
 
-The full threat model is in [`docs/07-security.md`](docs/07-security.md). The single-host and Docker-socket limits are in [`docs/08-roadmap.md`](docs/08-roadmap.md) and [`docs/07-risks-and-open-questions.md`](docs/07-risks-and-open-questions.md).
+The full threat model is in [`docs/architecture/security.md`](docs/architecture/security.md). The single-host and Docker-socket limits are in [`docs/roadmap.md`](docs/roadmap.md) and [`docs/risks-and-open-questions.md`](docs/risks-and-open-questions.md).
 
 ## Dependency and supply-chain reports
 
-Reports about a dependency’s license, provenance, or known vulnerability are welcome. Include the package, version, affected release artifact, and whether the default distribution is exposed. License policy is in [`docs/12-license-and-clean-room.md`](docs/12-license-and-clean-room.md).
+Reports about a dependency’s license, provenance, or known vulnerability are welcome. Include the package, version, affected release artifact, and whether the default distribution is exposed. License policy is in [`docs/license-and-provenance.md`](docs/license-and-provenance.md).

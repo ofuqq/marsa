@@ -37,7 +37,7 @@ body:
     id: requirements
     attributes:
       label: Requirement IDs
-      description: "Example: FR-BUILD-04, NFR-SEC-04."
+      description: "Example: requirement ID, requirement ID."
   - type: textarea
     id: dependencies
     attributes:

@@ -1,4 +1,4 @@
-name: Documentation and backlog
+name: CI
 
 on:
   push:
@@ -11,12 +11,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: docs-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  verify:
-    name: Links, requirements, and issue drafts
+  docs:
+    name: Docs checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -29,12 +29,4 @@ jobs:
           python-version: "3.12"
 
       - name: Check Markdown links and required files
-        run: python3 scripts/check-docs.py
-
-      - name: Validate issue frontmatter and requirement coverage
-        run: python3 scripts/validate-backlog.py
-
-      - name: Smoke-test the dry-run scripts
-        run: |
-          ./scripts/sync-labels.sh --dry-run >/dev/null
-          ./scripts/create-issues.sh --dry-run >/dev/null
+        run: python3 .github/scripts/check-docs.py

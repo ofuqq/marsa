@@ -19,7 +19,7 @@ Before any public release, the release owner must:
 5. Verify that no GPL, AGPL, SSPL, BUSL, Commons Clause, or unknown-license component is in the default distribution without an approved exception.
 6. Include the notices in the release artifact and repository.
 
-The policy and blocked-license list are in [`docs/12-license-and-clean-room.md`](docs/12-license-and-clean-room.md). The first release gate is tracked by issue `m6-03-supply-chain-and-release`.
+The policy and blocked-license list are in [`docs/license-and-provenance.md`](docs/license-and-provenance.md). The first release gate is tracked by issue `m6-03-supply-chain-and-release`.
 
 ## Notices
 

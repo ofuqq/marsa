@@ -35,7 +35,7 @@ body:
     id: requirements
     attributes:
       label: Related requirement IDs
-      description: "Optional. Example: FR-UI-02."
+      description: "Optional. Example: requirement ID."
   - type: dropdown
     id: scope
     attributes:

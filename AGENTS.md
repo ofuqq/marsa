@@ -7,7 +7,7 @@ and Caddy. The brand is Ofuq and the repository is `ofuqq/marsa`.
 ## Build and test
 
 The .NET solution is not created yet. The first implementation issue is
-`M0: Create the .NET solution skeleton` (see `docs/backlog/issues/`). Once code
+`Foundation: Create the .NET solution skeleton` (see `https://github.com/ofuqq/marsa/issuesissues/`). Once code
 lands, use:
 
 - `dotnet restore --locked-mode`
