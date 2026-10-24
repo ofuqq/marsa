@@ -120,6 +120,15 @@ E2E fixtures live under `tests/fixtures/`:
 
 Fixtures are original, small, and licensed with the repository. Do not copy sample repositories from another product.
 
+Run the full local verification gate before opening a pull request:
+
+```bash
+./eng/verify.sh
+```
+
+It restores with the lock file, builds with warnings as errors, runs all tests,
+and checks the public documentation links.
+
 ## 8. Running tests
 
 ```bash

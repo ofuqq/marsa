@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="../Marsa.Application/Marsa.Application.csproj" />
+    <ProjectReference Include="../Marsa.Contracts/Marsa.Contracts.csproj" />
+    <ProjectReference Include="../Marsa.Infrastructure/Marsa.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

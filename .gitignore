@@ -3,6 +3,7 @@ __pycache__/
 .venv/
 bin/
 obj/
+.nuget/
 .DS_Store
 .env
 *.user

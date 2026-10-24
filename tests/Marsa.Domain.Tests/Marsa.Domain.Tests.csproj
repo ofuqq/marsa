@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Marsa.Domain/Marsa.Domain.csproj" />
+    <ProjectReference Include="../../src/Marsa.Contracts/Marsa.Contracts.csproj" />
+    <ProjectReference Include="../../src/Marsa.Application/Marsa.Application.csproj" />
+    <ProjectReference Include="../../src/Marsa.Infrastructure/Marsa.Infrastructure.csproj" />
+    <ProjectReference Include="../../src/Marsa.Server/Marsa.Server.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="NetArchTest.Rules" />
+  </ItemGroup>
+
+</Project>

@@ -50,7 +50,7 @@ def main() -> int:
     markdown_files = [
         path
         for path in sorted(ROOT.rglob("*.md"))
-        if not any(part in {".git", ".local", "node_modules", "bin", "obj"} for part in path.parts)
+        if not any(part in {".git", ".local", "node_modules", "bin", "obj", ".nuget"} for part in path.parts)
     ]
 
     for path in markdown_files:
