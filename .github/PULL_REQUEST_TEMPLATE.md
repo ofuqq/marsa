@@ -16,7 +16,6 @@
 - [ ] No secrets, tokens, private URLs, or customer data are included.
 - [ ] User-visible strings are localized in English and Arabic where applicable.
 - [ ] I updated the affected documentation and indexes.
-- [ ] For code changes, the beginner Arabic explanation is written at `.local/learn/NNN-<issue-or-topic>.ar.md` (local only; not committed).
 - [ ] I did not copy code, prose, assets, or schemas from Openship or another project.
 
 ## Risk and rollback
