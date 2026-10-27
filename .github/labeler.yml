@@ -9,6 +9,10 @@
   - src/Marsa.Contracts/**
   - src/Marsa.Server/Configuration/**
   - src/Marsa.Server/Program.cs
+  - docs/**
+  - README.md
+  - AGENTS.md
+  - CONTRIBUTING.md
 "area: build":
   - src/Marsa.Application/Detection/**
   - src/Marsa.Server/Errors/**
@@ -31,8 +35,3 @@
 "area: security":
   - src/Marsa.Infrastructure/Security/**
   - src/Marsa.Server/Configuration/**
-"area: platform":
-  - docs/**
-  - README.md
-  - AGENTS.md
-  - CONTRIBUTING.md
