@@ -26,9 +26,10 @@ jobs:
             echo "Issue #$issue does not exist."
             exit 0
           fi
-          labels=$(gh issue view "$issue" --repo "$REPOSITORY" --json labels --jq '.labels[].name' | tr '\n' ' ')
-          milestone=$(gh issue view "$issue" --repo "$REPOSITORY" --json milestone --jq '.milestone.title // empty')
           args=(pr edit "$PR_NUMBER" --repo "$REPOSITORY")
-          for label in $labels; do args+=(--add-label "$label"); done
+          while IFS= read -r label; do
+            [ -n "$label" ] && args+=(--add-label "$label")
+          done < <(gh issue view "$issue" --repo "$REPOSITORY" --json labels --jq '.labels[].name')
+          milestone=$(gh issue view "$issue" --repo "$REPOSITORY" --json milestone --jq '.milestone.title // empty')
           if [ -n "$milestone" ]; then args+=(--milestone "$milestone"); fi
           gh "${args[@]}"
