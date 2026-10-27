@@ -1,0 +1,15 @@
+.git
+.local
+.agent
+.nuget
+bin
+obj
+**/bin
+**/obj
+artifacts
+.marsa
+*.env
+.vscode
+.idea
+docs
+.github

@@ -6,6 +6,7 @@
           - Marsa.sln
           - global.json
           - eng/**
+          - deploy/**
           - src/Marsa.Application/Marsa.Application.csproj
           - src/Marsa.Domain/**
           - src/Marsa.Contracts/**

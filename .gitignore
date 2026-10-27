@@ -6,4 +6,8 @@ obj/
 .nuget/
 .DS_Store
 .env
+*.env
 *.user
+artifacts/
+.marsa/
+

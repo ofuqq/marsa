@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-marsa}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-marsa}
+      POSTGRES_DB: ${POSTGRES_DB:-marsa}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-marsa} -d ${POSTGRES_DB:-marsa}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "${CADDY_HTTP_PORT:-8080}:8080"
+      - "${CADDY_HTTPS_PORT:-8443}:8443"
+    volumes:
+      - ./caddy/Caddyfile.template:/etc/caddy/Caddyfile:ro
+      - caddy_run:/run/marsa/caddy
+      - caddy_data:/data
+      - caddy_config:/config
+    healthcheck:
+      test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:
+  caddy_run:

@@ -30,3 +30,52 @@ jobs:
 
       - name: Check Markdown links and required files
         run: python3 .github/scripts/check-docs.py
+
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore dependencies (locked mode)
+        run: dotnet restore --locked-mode
+
+      - name: Build solution
+        run: dotnet build Marsa.sln -warnaserror --no-restore
+
+      - name: Run tests
+        run: dotnet test Marsa.sln --no-build --verbosity normal
+
+  docker:
+    name: Container image build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Build server container image
+        run: docker build -f deploy/server.Dockerfile -t marsa-server:ci .
+
+      - name: Verify non-root user (UID 10001)
+        run: |
+          USER_ID=$(docker run --rm --entrypoint id marsa-server:ci -u)
+          if [ "$USER_ID" != "10001" ]; then
+            echo "Expected UID 10001 but got $USER_ID"
+            exit 1
+          fi
+
+      - name: Verify no Git binary or GPL tooling in runtime
+        run: |
+          if docker run --rm --entrypoint which marsa-server:ci git; then
+            echo "Git binary must not exist in runtime image"
+            exit 1
+          fi
+

@@ -1,0 +1,8 @@
+{
+    admin "unix//run/marsa/caddy/admin.sock"
+    auto_https off
+}
+
+:8080 {
+    respond /health/edge "healthy" 200
+}
