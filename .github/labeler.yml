@@ -1,37 +1,53 @@
 "area: platform":
-  - .github/**
-  - Directory.*
-  - Marsa.sln
-  - global.json
-  - eng/**
-  - src/Marsa.Application/Marsa.Application.csproj
-  - src/Marsa.Domain/**
-  - src/Marsa.Contracts/**
-  - src/Marsa.Server/Configuration/**
-  - src/Marsa.Server/Program.cs
-  - docs/**
-  - README.md
-  - AGENTS.md
-  - CONTRIBUTING.md
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+          - Directory.*
+          - Marsa.sln
+          - global.json
+          - eng/**
+          - src/Marsa.Application/Marsa.Application.csproj
+          - src/Marsa.Domain/**
+          - src/Marsa.Contracts/**
+          - src/Marsa.Server/Configuration/**
+          - src/Marsa.Server/Program.cs
+          - docs/**
+          - README.md
+          - AGENTS.md
+          - CONTRIBUTING.md
 "area: build":
-  - src/Marsa.Application/Detection/**
-  - src/Marsa.Server/Errors/**
-  - src/Marsa.Infrastructure/Marsa.Infrastructure.csproj
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/Marsa.Application/Detection/**
+          - src/Marsa.Server/Errors/**
+          - src/Marsa.Infrastructure/Marsa.Infrastructure.csproj
 "area: deployment":
-  - src/Marsa.Infrastructure/Docker/**
-  - src/Marsa.Server/Health/**
-  - src/Marsa.Server/Middleware/**
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/Marsa.Infrastructure/Docker/**
+          - src/Marsa.Server/Health/**
+          - src/Marsa.Server/Middleware/**
 "area: authentication":
-  - src/Marsa.Server/Auth/**
-  - src/Marsa.Application/Identity/**
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/Marsa.Server/Auth/**
+          - src/Marsa.Application/Identity/**
 "area: projects":
-  - src/Marsa.Application/Projects/**
-  - src/Marsa.Server/ProjectEndpoints.cs
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/Marsa.Application/Projects/**
+          - src/Marsa.Server/ProjectEndpoints.cs
 "area: edge":
-  - src/Marsa.Infrastructure/Edge/**
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/Marsa.Infrastructure/Edge/**
 "area: observability":
-  - src/Marsa.Server/Health/**
-  - docs/development/testing.md
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/Marsa.Server/Health/**
+          - docs/development/testing.md
 "area: security":
-  - src/Marsa.Infrastructure/Security/**
-  - src/Marsa.Server/Configuration/**
+  - changed-files:
+      - any-glob-to-any-file:
+          - src/Marsa.Infrastructure/Security/**
+          - src/Marsa.Server/Configuration/**
