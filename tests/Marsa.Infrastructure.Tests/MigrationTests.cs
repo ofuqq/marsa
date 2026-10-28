@@ -51,6 +51,77 @@ public sealed class MigrationTests
     }
 
     [Fact]
+    public void ModelConfiguresUsersTableWithUniqueNormalizedEmail()
+    {
+        var factory = new MarsaDesignTimeDbContextFactory();
+        using var context = factory.CreateDbContext(Array.Empty<string>());
+
+        var entityType = context.Model.FindEntityType(typeof(UserRecord));
+        Assert.NotNull(entityType);
+        Assert.Equal("users", entityType.GetTableName());
+
+        var emailProp = entityType.FindProperty(nameof(UserRecord.Email));
+        Assert.NotNull(emailProp);
+        Assert.False(emailProp.IsNullable);
+
+        var normalizedEmailIndex = entityType.GetIndexes()
+            .SingleOrDefault(i => i.Properties.Any(p => p.Name == nameof(UserRecord.NormalizedEmail)));
+        Assert.NotNull(normalizedEmailIndex);
+        Assert.True(normalizedEmailIndex.IsUnique);
+    }
+
+    [Fact]
+    public void ModelConfiguresMembershipsTable()
+    {
+        var factory = new MarsaDesignTimeDbContextFactory();
+        using var context = factory.CreateDbContext(Array.Empty<string>());
+
+        var entityType = context.Model.FindEntityType(typeof(MembershipRecord));
+        Assert.NotNull(entityType);
+        Assert.Equal("memberships", entityType.GetTableName());
+
+        var orgUserIndex = entityType.GetIndexes().SingleOrDefault(i =>
+            i.Properties.Count == 2 &&
+            i.Properties.Any(p => p.Name == nameof(MembershipRecord.OrganizationId)) &&
+            i.Properties.Any(p => p.Name == nameof(MembershipRecord.UserId)));
+        Assert.NotNull(orgUserIndex);
+        Assert.True(orgUserIndex.IsUnique);
+    }
+
+    [Fact]
+    public void ModelConfiguresSetupTokensTableWithUniqueHash()
+    {
+        var factory = new MarsaDesignTimeDbContextFactory();
+        using var context = factory.CreateDbContext(Array.Empty<string>());
+
+        var entityType = context.Model.FindEntityType(typeof(SetupTokenRecord));
+        Assert.NotNull(entityType);
+        Assert.Equal("setup_tokens", entityType.GetTableName());
+
+        var hashIndex = entityType.GetIndexes()
+            .SingleOrDefault(i => i.Properties.Any(p => p.Name == nameof(SetupTokenRecord.TokenHash)));
+        Assert.NotNull(hashIndex);
+        Assert.True(hashIndex.IsUnique);
+    }
+
+    [Fact]
+    public void ModelConfiguresSystemSetupSingletonConstraint()
+    {
+        var factory = new MarsaDesignTimeDbContextFactory();
+        using var context = factory.CreateDbContext(Array.Empty<string>());
+
+        var designTimeModel = Microsoft.EntityFrameworkCore.Infrastructure.AccessorExtensions.GetService<Microsoft.EntityFrameworkCore.Metadata.IDesignTimeModel>(context).Model;
+        var entityType = designTimeModel.FindEntityType(typeof(SystemSetupRecord));
+        Assert.NotNull(entityType);
+        Assert.Equal("system_setup", entityType.GetTableName());
+
+        var checkConstraint = entityType.GetCheckConstraints()
+            .SingleOrDefault(c => c.Name == "CK_system_setup_singleton");
+        Assert.NotNull(checkConstraint);
+        Assert.Equal("id = 1", checkConstraint.Sql);
+    }
+
+    [Fact]
     public void DesignTimeFactoryProducesValidContext()
     {
         var factory = new MarsaDesignTimeDbContextFactory();

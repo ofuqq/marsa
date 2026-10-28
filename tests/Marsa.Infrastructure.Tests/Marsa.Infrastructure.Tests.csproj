@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Marsa.Infrastructure/Marsa.Infrastructure.csproj" />
+    <ProjectReference Include="../../src/Marsa.Application/Marsa.Application.csproj" />
     <ProjectReference Include="../../src/Marsa.Domain/Marsa.Domain.csproj" />
     <ProjectReference Include="../../src/Marsa.Contracts/Marsa.Contracts.csproj" />
   </ItemGroup>

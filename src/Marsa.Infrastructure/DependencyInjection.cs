@@ -1,5 +1,9 @@
+using Marsa.Application.Authentication;
+using Marsa.Application.Setup;
+using Marsa.Infrastructure.Authentication;
 using Marsa.Infrastructure.Docker;
 using Marsa.Infrastructure.Persistence;
+using Marsa.Infrastructure.Setup;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,6 +28,8 @@ public static class DependencyInjection
         }
 
         services.AddSingleton<IDockerCapabilityProbe, DockerCapabilityProbe>();
+        services.AddSingleton<IPasswordHasher, IdentityPasswordHasher>();
+        services.AddScoped<ISetupService, SetupService>();
 
         return services;
     }

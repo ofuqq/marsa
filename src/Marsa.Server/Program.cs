@@ -1,12 +1,15 @@
 using Marsa.Infrastructure;
 using Marsa.Infrastructure.Docker;
 using Marsa.Server.Configuration;
+using Marsa.Server.Endpoints;
 using Marsa.Server.Errors;
 using Marsa.Server.Health;
 using Marsa.Server.Middleware;
+using Marsa.Server.Setup;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +45,19 @@ builder.Services.AddMarsaInfrastructure(connectionString);
 builder.Services.AddHealthChecks()
     .AddCheck<DockerHealthCheck>("docker", tags: new[] { "ready" });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddFixedWindowLimiter("setup", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.PermitLimit = 5;
+        opt.QueueLimit = 0;
+    });
+});
+
+builder.Services.AddHostedService<SetupTokenBootstrapService>();
+
 if (builder.Environment.IsProduction())
 {
     builder.Logging.ClearProviders();
@@ -55,6 +71,8 @@ app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
 {
     await ProblemDetailsWriter.WriteAsync(context, new Exception("Unhandled"));
 }));
+
+app.UseRateLimiter();
 
 app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
 
@@ -70,6 +88,8 @@ app.MapHealthChecks("/health/live", new HealthCheckOptions
 });
 app.MapHealthChecks("/health/ready", detailedHealthOptions);
 app.MapHealthChecks("/health/degraded", detailedHealthOptions);
+
+app.MapSetupEndpoints();
 
 _ = app.Services.GetRequiredService<IOptions<MarsaOptions>>().Value;
 
