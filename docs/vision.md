@@ -33,7 +33,7 @@ Naming is governed by one canonical file: [`../identity.md`](identity.md). In su
 | .NET namespaces and assemblies | `Marsa.*` | Code-facing identifiers use the product name. |
 | NuGet family | `ofuqq.Marsa.*` | Registry identifiers use the `ofuqq` handle; umbrella package `ofuqq.Marsa`. |
 | npm scope | `@ofuqq/*` | Registry identifiers use the `ofuqq` handle. |
-| CLI, config, environment, labels, tokens | `marsa`, `marsa.json`, `MARSA_`, `io.marsa.*`, `marsa_pat_` | Product-derived identifiers. |
+| CLI, config, environment, labels, tokens | `marsa`, `marsa.json`, `Marsa__`, `io.marsa.*`, `marsa_pat_` | Product-derived identifiers. |
 | Arabic tagline | **حيث ترسو تطبيقاتك** | “Where your applications dock.” Review with a native copy editor. |
 
 “Ofuq” is the organization, not the product. Documentation should say “Marsa, an Ofuq project” on first mention and then “Marsa.” Do not call the product “Ofuq Marsa” in the UI; do not call the organization “Marsa.” The extra `q` in `ofuqq` is an account handle, not a second brand.

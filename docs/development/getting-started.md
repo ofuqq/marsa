@@ -55,11 +55,11 @@ Use environment variables or `dotnet user-secrets`. Never commit a real `.env`.
 
 ```text
 ASPNETCORE_ENVIRONMENT=Development
-MARSA_Database__ConnectionString=Host=localhost;Port=5432;Database=marsa;Username=marsa;Password=marsa
-MARSA_Edge__AdminSocket=/run/marsa/caddy/admin.sock
-MARSA_Security__MasterKeyPath=./.marsa/master.key
-MARSA_PublicBaseUrl=http://localhost:5080
-MARSA_Docker__SocketPath=/var/run/docker.sock
+Marsa__Database__ConnectionString=Host=localhost;Port=5432;Database=marsa;Username=marsa;Password=marsa
+Marsa__Edge__CaddyAdminSocket=/run/marsa/caddy/admin.sock
+Marsa__Security__MasterKeyPath=./.marsa/master.key
+Marsa__PublicBaseUrl=http://localhost:5080
+Marsa__Docker__SocketPath=/var/run/docker.sock
 ```
 
 Rules:

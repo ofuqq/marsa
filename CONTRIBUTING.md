@@ -66,7 +66,7 @@ If provenance is unclear, maintainers will reject the contribution until it is r
 | Namespaces and assemblies | `Marsa.*` |
 | NuGet | `ofuqq.Marsa.*` |
 | npm | `@ofuqq/*` |
-| CLI, config, environment, labels, tokens | `marsa`, `marsa.json`, `MARSA_`, `io.marsa.*`, `marsa_pat_` |
+| CLI, config, environment, labels, tokens | `marsa`, `marsa.json`, `Marsa__`, `io.marsa.*`, `marsa_pat_` |
 
 Do not use `ofuq/marsa`, `Ofuq.Marsa.*`, `@marsa/*`, or “Ofuq Marsa” as a product name. Do not invent a public Marsa domain. Use relative links and `urn:marsa:*` identifiers until a domain is secured.
 

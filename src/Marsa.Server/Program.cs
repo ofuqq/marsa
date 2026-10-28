@@ -18,36 +18,25 @@ builder.Services
     {
         if (string.IsNullOrWhiteSpace(options.DatabaseConnectionString))
         {
-            options.DatabaseConnectionString = builder.Configuration["Marsa:Database:ConnectionString"]
-                ?? builder.Configuration["MARSA_Database__ConnectionString"]
-                ?? string.Empty;
+            options.DatabaseConnectionString = builder.Configuration["Marsa:Database:ConnectionString"] ?? string.Empty;
         }
         if (string.IsNullOrWhiteSpace(options.MasterKeyPath))
         {
-            options.MasterKeyPath = builder.Configuration["Marsa:Security:MasterKeyPath"]
-                ?? builder.Configuration["MARSA_Security__MasterKeyPath"]
-                ?? string.Empty;
+            options.MasterKeyPath = builder.Configuration["Marsa:Security:MasterKeyPath"] ?? string.Empty;
         }
         if (string.IsNullOrWhiteSpace(options.CaddyAdminSocket))
         {
-            options.CaddyAdminSocket = builder.Configuration["Marsa:Edge:CaddyAdminSocket"]
-                ?? builder.Configuration["MARSA_Edge__AdminSocket"]
-                ?? string.Empty;
+            options.CaddyAdminSocket = builder.Configuration["Marsa:Edge:CaddyAdminSocket"] ?? string.Empty;
         }
         if (string.IsNullOrWhiteSpace(options.PublicBaseUrl))
         {
-            options.PublicBaseUrl = builder.Configuration["Marsa:PublicBaseUrl"]
-                ?? builder.Configuration["MARSA_PublicBaseUrl"]
-                ?? string.Empty;
+            options.PublicBaseUrl = builder.Configuration["Marsa:PublicBaseUrl"] ?? string.Empty;
         }
     })
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
-var connectionString = builder.Configuration.GetSection("Marsa")["DatabaseConnectionString"]
-    ?? builder.Configuration.GetSection("Marsa:Database")["ConnectionString"]
-    ?? builder.Configuration["MARSA_Database__ConnectionString"]
-    ?? string.Empty;
+var connectionString = builder.Configuration["Marsa:Database:ConnectionString"] ?? string.Empty;
 
 builder.Services.AddMarsaInfrastructure(connectionString);
 builder.Services.AddHealthChecks()

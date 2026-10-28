@@ -25,7 +25,7 @@ identity:
 
   cli: marsa
   config_file: marsa.json
-  env_prefix: MARSA_
+  env_prefix: Marsa__
   docker_label_prefix: io.marsa
   token_prefix: marsa_pat_
 
@@ -46,7 +46,7 @@ identity:
 | npm packages | `@ofuqq/*` | Registry scope uses the `ofuqq` handle. Example: `@ofuqq/marsa-cli`. |
 | CLI command | `marsa` | Lowercase, no prefix. |
 | Repository config file | `marsa.json` | Replaces the prior analysis placeholder `ofuq.json`. |
-| Environment variables | `MARSA_` | Example: `MARSA_Database__ConnectionString`, not `OFUQ_...`. |
+| Environment variables | `Marsa__` | Example: `Marsa__Database__ConnectionString`, not `OFUQ_...`. |
 | Docker labels | `io.marsa.*` | Ownership and guard labels. |
 | API token prefix | `marsa_pat_` | Personal access tokens are recognizable in logs and secret scanners. |
 | Public domain |  | No domain is owned. Use `urn:marsa:...` identifiers and relative links until one is secured. |

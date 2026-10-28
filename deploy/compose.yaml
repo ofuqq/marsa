@@ -44,11 +44,11 @@ services:
       - /tmp
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      MARSA_Database__ConnectionString: Host=postgres;Port=5432;Database=marsa;Username=${POSTGRES_USER:-marsa};Password=${POSTGRES_PASSWORD:-marsa}
-      MARSA_Edge__AdminSocket: /run/marsa/caddy/admin.sock
-      MARSA_Security__MasterKeyPath: /var/lib/marsa/master.key
-      MARSA_PublicBaseUrl: ${MARSA_PUBLIC_BASE_URL:-http://localhost}
-      MARSA_Docker__SocketPath: /var/run/docker.sock
+      Marsa__Database__ConnectionString: Host=postgres;Port=5432;Database=marsa;Username=${POSTGRES_USER:-marsa};Password=${POSTGRES_PASSWORD:-marsa}
+      Marsa__Edge__CaddyAdminSocket: /run/marsa/caddy/admin.sock
+      Marsa__Security__MasterKeyPath: /var/lib/marsa/master.key
+      Marsa__PublicBaseUrl: ${MARSA_PUBLIC_BASE_URL:-http://localhost}
+      Marsa__Docker__SocketPath: /var/run/docker.sock
     volumes:
       - server_data:/var/lib/marsa
       - caddy_run:/run/marsa/caddy

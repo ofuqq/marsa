@@ -8,9 +8,9 @@ public class HealthAndCorrelationTests(WebApplicationFactory<Program> factory) :
 {
     private readonly WebApplicationFactory<Program> _factory = factory.WithWebHostBuilder(builder =>
     {
-        builder.UseSetting("Marsa:DatabaseConnectionString", "Host=localhost;Database=marsa");
-        builder.UseSetting("Marsa:MasterKeyPath", "/tmp/marsa-master.key");
-        builder.UseSetting("Marsa:CaddyAdminSocket", "/tmp/marsa-caddy.sock");
+        builder.UseSetting("Marsa:Database:ConnectionString", "Host=localhost;Database=marsa");
+        builder.UseSetting("Marsa:Security:MasterKeyPath", "/tmp/marsa-master.key");
+        builder.UseSetting("Marsa:Edge:CaddyAdminSocket", "/tmp/marsa-caddy.sock");
         builder.UseSetting("Marsa:PublicBaseUrl", "http://localhost:5080");
     });
 
