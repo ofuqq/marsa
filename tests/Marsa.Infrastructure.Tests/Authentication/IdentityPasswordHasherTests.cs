@@ -56,4 +56,25 @@ public sealed class IdentityPasswordHasherTests
 
         Assert.False(hasher.VerifyPassword(hash!, password!));
     }
+
+    [Fact]
+    public void VerifyDummyPassword_AlwaysReturnsFalse()
+    {
+        var hasher = new IdentityPasswordHasher();
+
+        var result = hasher.VerifyDummyPassword("AnyPassword123!");
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void VerifyPasswordWithRehash_WhenValid_ReturnsValidTrue()
+    {
+        var hasher = new IdentityPasswordHasher();
+        var hash = hasher.HashPassword("MySecurePass1234!");
+
+        var (isValid, _) = hasher.VerifyPasswordWithRehash(hash, "MySecurePass1234!");
+
+        Assert.True(isValid);
+    }
 }

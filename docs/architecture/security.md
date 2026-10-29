@@ -77,11 +77,13 @@ Mitigations in 0.1:
 ### 3.2 Dashboard sessions
 
 - ASP.NET Core Identity with a modern password hash.
-- Cookie flags: `HttpOnly`, `Secure` in production, `SameSite=Lax`.
-- Session rotation on login and privilege change.
-- Logout invalidates the server-side session.
-- Cookie-authenticated unsafe methods require antiforgery protection and an origin check.
-- Security headers: CSP, HSTS in production, frame denial, `X-Content-Type-Options: nosniff`, and a strict referrer policy.
+- Cookie flags: `HttpOnly`, `Secure` in production / HTTPS, `SameSite=Lax`.
+- Cookie naming: `__Host-marsa_session` in production / HTTPS; `marsa_session` in local development without TLS.
+- Session timeout policy (decision): idle timeout is 60 minutes of inactivity; absolute lifetime is 24 hours.
+- Session rotation on login and privilege change; a fresh 256-bit cryptographically secure token is generated on every login to prevent session fixation.
+- Logout invalidates the server-side session durably in PostgreSQL and clears the client-side cookie.
+- Cookie-authenticated unsafe methods require antiforgery protection via `X-CSRF-TOKEN` or form token; Bearer token requests are exempt.
+- Security headers: CSP (`default-src 'self'; frame-ancestors 'none'`), HSTS in production, frame denial (`X-Frame-Options: DENY`), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, and `Cache-Control: no-store, no-cache, must-revalidate` on authenticated responses.
 - No loopback zero-auth mode in the container deployment.
 
 ### 3.3 Personal access tokens

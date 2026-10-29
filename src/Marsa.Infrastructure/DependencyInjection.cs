@@ -30,6 +30,7 @@ public static class DependencyInjection
         services.AddSingleton<IDockerCapabilityProbe, DockerCapabilityProbe>();
         services.AddSingleton<IPasswordHasher, IdentityPasswordHasher>();
         services.AddScoped<ISetupService, SetupService>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
 
         return services;
     }
