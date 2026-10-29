@@ -122,6 +122,31 @@ public sealed class MigrationTests
     }
 
     [Fact]
+    public void ModelConfiguresUserSessionsTable()
+    {
+        var factory = new MarsaDesignTimeDbContextFactory();
+        using var context = factory.CreateDbContext(Array.Empty<string>());
+
+        var entityType = context.Model.FindEntityType(typeof(UserSessionRecord));
+        Assert.NotNull(entityType);
+        Assert.Equal("user_sessions", entityType.GetTableName());
+
+        var tokenHashProp = entityType.FindProperty(nameof(UserSessionRecord.TokenHash));
+        Assert.NotNull(tokenHashProp);
+        Assert.False(tokenHashProp.IsNullable);
+
+        var hashIndex = entityType.GetIndexes()
+            .SingleOrDefault(i => i.Properties.Any(p => p.Name == nameof(UserSessionRecord.TokenHash)));
+        Assert.NotNull(hashIndex);
+        Assert.True(hashIndex.IsUnique);
+
+        var fk = entityType.GetForeignKeys()
+            .SingleOrDefault(f => f.PrincipalEntityType.ClrType == typeof(UserRecord));
+        Assert.NotNull(fk);
+        Assert.Equal(DeleteBehavior.Cascade, fk.DeleteBehavior);
+    }
+
+    [Fact]
     public void DesignTimeFactoryProducesValidContext()
     {
         var factory = new MarsaDesignTimeDbContextFactory();

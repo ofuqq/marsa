@@ -17,6 +17,7 @@ public sealed class MarsaDbContext : DbContext
     public DbSet<MembershipRecord> Memberships => Set<MembershipRecord>();
     public DbSet<SetupTokenRecord> SetupTokens => Set<SetupTokenRecord>();
     public DbSet<SystemSetupRecord> SystemSetup => Set<SystemSetupRecord>();
+    public DbSet<UserSessionRecord> UserSessions => Set<UserSessionRecord>();
     public DbSet<SchemaVersionRecord> SchemaVersions => Set<SchemaVersionRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -93,6 +94,25 @@ public sealed class MarsaDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.IsCompleted).IsRequired();
+        });
+
+        modelBuilder.Entity<UserSessionRecord>(entity =>
+        {
+            entity.ToTable("user_sessions");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.TokenHash).IsRequired();
+            entity.HasIndex(e => e.TokenHash).IsUnique();
+            entity.Property(e => e.CreatedAt).IsRequired();
+            entity.Property(e => e.ExpiresAt).IsRequired();
+            entity.Property(e => e.LastActivityAt).IsRequired();
+            entity.Property(e => e.IsRevoked).IsRequired();
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => new { e.UserId, e.IsRevoked });
         });
 
         modelBuilder.Entity<SchemaVersionRecord>(entity =>

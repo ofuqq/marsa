@@ -69,10 +69,27 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     }
 });
 
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-CSRF-TOKEN";
+});
+
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     options.AddPolicy("setup", httpContext =>
+    {
+        var clientIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        return RateLimitPartition.GetFixedWindowLimiter(
+            clientIp,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                Window = TimeSpan.FromMinutes(1),
+                PermitLimit = 5,
+                QueueLimit = 0,
+            });
+    });
+    options.AddPolicy("login", httpContext =>
     {
         var clientIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
         return RateLimitPartition.GetFixedWindowLimiter(
@@ -98,12 +115,15 @@ var app = builder.Build();
 
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseForwardedHeaders();
+app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
 {
     await ProblemDetailsWriter.WriteAsync(context, new Exception("Unhandled"));
 }));
 
 app.UseRateLimiter();
+app.UseMiddleware<SessionAuthenticationMiddleware>();
+app.UseMiddleware<CookieAntiforgeryValidationMiddleware>();
 
 app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
 
@@ -121,6 +141,7 @@ app.MapHealthChecks("/health/ready", detailedHealthOptions);
 app.MapHealthChecks("/health/degraded", detailedHealthOptions);
 
 app.MapSetupEndpoints();
+app.MapAuthEndpoints();
 
 _ = app.Services.GetRequiredService<IOptions<MarsaOptions>>().Value;
 
