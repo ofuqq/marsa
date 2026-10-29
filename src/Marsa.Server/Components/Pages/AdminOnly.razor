@@ -1,0 +1,12 @@
+@page "/admin"
+@attribute [Authorize(Policy = MarsaPolicies.RequireAdmin)]
+
+<div class="admin-view">
+    <h1>Administrator Area</h1>
+    <p>This view is restricted to administrators and owners.</p>
+    <section class="card" aria-labelledby="privileged-heading">
+        <h2 id="privileged-heading">Privileged Operations</h2>
+        <p>Role authorization verified: User satisfies <code>@MarsaPolicies.RequireAdmin</code>.</p>
+    </section>
+</div>
+

@@ -19,6 +19,7 @@ public static partial class SetupEndpoints
     private static void MapSetupGroup(RouteGroupBuilder group)
     {
         group.RequireRateLimiting("setup");
+        group.AllowAnonymous();
 
         group.MapGet("", async (
             [FromServices] ISetupService setupService,
