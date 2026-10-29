@@ -1,0 +1,32 @@
+@page "/"
+@page "/dashboard"
+@attribute [Authorize]
+
+<div class="dashboard">
+    <h1>Dashboard</h1>
+    <p>Welcome to Marsa local management console.</p>
+
+    <AuthorizeView>
+        <Authorized>
+            <section class="card" aria-labelledby="user-info-heading">
+                <h2 id="user-info-heading">Session Information</h2>
+                <dl>
+                    <dt>User:</dt>
+                    <dd>@context.User.Identity?.Name</dd>
+                    <dt>Role:</dt>
+                    <dd><span class="badge">@context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span></dd>
+                    <dt>User ID:</dt>
+                    <dd>@context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value</dd>
+                </dl>
+            </section>
+        </Authorized>
+    </AuthorizeView>
+
+    <section class="card" aria-labelledby="status-heading">
+        <h2 id="status-heading">Host Status</h2>
+        <p>Deployment engine: <strong>Single Linux Host</strong></p>
+        <p>Edge proxy: <strong>Caddy</strong></p>
+        <p>Database: <strong>PostgreSQL</strong></p>
+    </section>
+</div>
+

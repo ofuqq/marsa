@@ -79,7 +79,7 @@ public static class AuthEndpoints
                     role = result.User.Role,
                 }
             });
-        }).RequireRateLimiting("login");
+        }).RequireRateLimiting("login").AllowAnonymous();
 
         group.MapPost("/logout", async (
             [FromServices] IAuthenticationService authService,
@@ -137,7 +137,7 @@ public static class AuthEndpoints
                 token = tokens.RequestToken,
                 headerName = "X-CSRF-TOKEN",
             });
-        });
+        }).AllowAnonymous();
 
         return app;
     }

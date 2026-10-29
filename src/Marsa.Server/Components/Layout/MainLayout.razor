@@ -1,0 +1,36 @@
+@inherits LayoutComponentBase
+
+<div class="app-shell">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header class="app-header" role="banner">
+        <a href="/" class="brand" aria-label="Marsa home">Marsa</a>
+        <nav aria-label="Main Navigation">
+            <ul class="nav-list" role="list">
+                <li><a href="/" class="nav-link">Dashboard</a></li>
+                <li><a href="/admin" class="nav-link">Admin Area</a></li>
+                <li>
+                    <AuthorizeView>
+                        <Authorized>
+                            <span class="user-badge" aria-label="Current user: @context.User.Identity?.Name">
+                                @context.User.Identity?.Name
+                                <span class="badge">@context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+                            </span>
+                        </Authorized>
+                        <NotAuthorized>
+                            <a href="/login" class="nav-link">Log In</a>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="main-content" class="main-content" role="main" tabindex="-1">
+        @Body
+    </main>
+
+    <footer class="app-footer" role="contentinfo">
+        <p>Marsa — Single Linux Host Deployment Platform</p>
+    </footer>
+</div>
+

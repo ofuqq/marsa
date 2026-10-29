@@ -1,14 +1,18 @@
 using System.Net;
 using System.Threading.RateLimiting;
+using Marsa.Application.Authorization;
 using Marsa.Infrastructure;
 using Marsa.Infrastructure.Docker;
+using Marsa.Server.Authentication;
+using Marsa.Server.Components;
 using Marsa.Server.Configuration;
 using Marsa.Server.Endpoints;
 using Marsa.Server.Errors;
 using Marsa.Server.Health;
 using Marsa.Server.Middleware;
 using Marsa.Server.Setup;
-using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
@@ -74,6 +78,36 @@ builder.Services.AddAntiforgery(options =>
     options.HeaderName = "X-CSRF-TOKEN";
 });
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = MarsaAuthenticationHandler.SchemeName;
+    options.DefaultChallengeScheme = MarsaAuthenticationHandler.SchemeName;
+    options.DefaultForbidScheme = MarsaAuthenticationHandler.SchemeName;
+})
+.AddScheme<AuthenticationSchemeOptions, MarsaAuthenticationHandler>(MarsaAuthenticationHandler.SchemeName, _ => { });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+
+    options.AddPolicy(MarsaPolicies.RequireOwner, policy =>
+        policy.RequireRole(MarsaRoles.Owner));
+
+    options.AddPolicy(MarsaPolicies.RequireAdmin, policy =>
+        policy.RequireRole(MarsaRoles.Owner, MarsaRoles.Admin));
+
+    options.AddPolicy(MarsaPolicies.RequireDeveloper, policy =>
+        policy.RequireRole(MarsaRoles.Owner, MarsaRoles.Admin, MarsaRoles.Developer));
+
+    options.AddPolicy(MarsaPolicies.RequireViewer, policy =>
+        policy.RequireRole(MarsaRoles.Owner, MarsaRoles.Admin, MarsaRoles.Developer, MarsaRoles.Viewer));
+});
+
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddRazorComponents();
+
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -123,9 +157,12 @@ app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
 
 app.UseRateLimiter();
 app.UseMiddleware<SessionAuthenticationMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseAntiforgery();
 app.UseMiddleware<CookieAntiforgeryValidationMiddleware>();
 
-app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
+app.MapGet("/healthz", () => Results.Ok(new { status = "ok" })).AllowAnonymous();
 
 var detailedHealthOptions = new HealthCheckOptions
 {
@@ -136,12 +173,16 @@ app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
     Predicate = _ => false,
     ResponseWriter = WriteHealthReportAsync,
-});
-app.MapHealthChecks("/health/ready", detailedHealthOptions);
-app.MapHealthChecks("/health/degraded", detailedHealthOptions);
+}).AllowAnonymous();
+app.MapHealthChecks("/health/ready", detailedHealthOptions).AllowAnonymous();
+app.MapHealthChecks("/health/degraded", detailedHealthOptions).AllowAnonymous();
 
 app.MapSetupEndpoints();
 app.MapAuthEndpoints();
+
+app.MapGet("/api/v1/system/info", () => Results.Ok(new { version = "0.1.0" }));
+
+app.MapRazorComponents<App>();
 
 _ = app.Services.GetRequiredService<IOptions<MarsaOptions>>().Value;
 
