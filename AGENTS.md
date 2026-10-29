@@ -6,10 +6,6 @@ and Caddy. The brand is Ofuq and the repository is `ofuqq/marsa`.
 
 ## Build and test
 
-The .NET solution is not created yet. The first implementation issue is
-`Foundation: Create the .NET solution skeleton` (see `https://github.com/ofuqq/marsa/issuesissues/`). Once code
-lands, use:
-
 - `dotnet restore --locked-mode`
 - `dotnet build Marsa.sln -warnaserror`
 - `dotnet test Marsa.sln`
@@ -17,6 +13,16 @@ lands, use:
 
 Contributors should read `CONTRIBUTING.md`, `docs/development/getting-started.md`,
 and `docs/testing.md` before changing code.
+
+## Code rules
+
+- Propagate a `CancellationToken` through all asynchronous API methods.
+- Read-only EF Core queries must use `AsNoTracking()` and avoid N+1 queries via projection or `Include`.
+- Migrations are applied explicitly out-of-band; never auto-migrate during server startup.
+- Configuration options validate at startup (`ValidateOnStart`) using the canonical `Marsa__Category__Key` shape.
+- Treat compiler and analyzer warnings as errors (`-warnaserror`); keep the build clean.
+- Every functional change must be covered by automated tests.
+- Run `./eng/verify.sh` locally and ensure all gates pass before opening a pull request.
 
 ## Conventions
 
