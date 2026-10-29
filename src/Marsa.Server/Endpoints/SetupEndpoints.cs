@@ -11,8 +11,14 @@ public static partial class SetupEndpoints
 
     public static IEndpointRouteBuilder MapSetupEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/system/setup")
-            .RequireRateLimiting("setup");
+        MapSetupGroup(app.MapGroup("/system/setup"));
+        MapSetupGroup(app.MapGroup("/api/v1/system/setup"));
+        return app;
+    }
+
+    private static void MapSetupGroup(RouteGroupBuilder group)
+    {
+        group.RequireRateLimiting("setup");
 
         group.MapGet("", async (
             [FromServices] ISetupService setupService,
@@ -111,8 +117,6 @@ public static partial class SetupEndpoints
                 return Results.NotFound();
             }
         });
-
-        return app;
     }
 
     private static object CreateValidationProblem(string detail)

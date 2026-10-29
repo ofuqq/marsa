@@ -6,6 +6,6 @@ namespace Marsa.Application.Setup;
 public interface ISetupService
 {
     Task<bool> IsSetupCompletedAsync(CancellationToken cancellationToken = default);
-    Task<SetupTokenGenerationResult?> GetOrCreateSetupTokenAsync(CancellationToken cancellationToken = default);
+    Task<SetupTokenGenerationResult?> GetOrCreateSetupTokenAsync(bool forceRegenerate = false, CancellationToken cancellationToken = default);
     Task<SetupResult> CompleteSetupAsync(SetupCommand command, CancellationToken cancellationToken = default);
 }

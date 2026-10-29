@@ -1,3 +1,5 @@
+using System.Net;
+using System.Threading.RateLimiting;
 using Marsa.Infrastructure;
 using Marsa.Infrastructure.Docker;
 using Marsa.Server.Configuration;
@@ -7,9 +9,10 @@ using Marsa.Server.Health;
 using Marsa.Server.Middleware;
 using Marsa.Server.Setup;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,14 +48,41 @@ builder.Services.AddMarsaInfrastructure(connectionString);
 builder.Services.AddHealthChecks()
     .AddCheck<DockerHealthCheck>("docker", tags: new[] { "ready" });
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownProxies.Clear();
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Add(IPAddress.Loopback);
+    options.KnownProxies.Add(IPAddress.IPv6Loopback);
+
+    var trustedProxiesConfig = builder.Configuration.GetSection("Marsa:Edge:TrustedProxies").Get<string[]>()
+        ?? builder.Configuration.GetSection("Marsa:TrustedProxies").Get<string[]>()
+        ?? Array.Empty<string>();
+
+    foreach (var proxy in trustedProxiesConfig)
+    {
+        if (IPAddress.TryParse(proxy, out var ip))
+        {
+            options.KnownProxies.Add(ip);
+        }
+    }
+});
+
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-    options.AddFixedWindowLimiter("setup", opt =>
+    options.AddPolicy("setup", httpContext =>
     {
-        opt.Window = TimeSpan.FromMinutes(1);
-        opt.PermitLimit = 5;
-        opt.QueueLimit = 0;
+        var clientIp = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        return RateLimitPartition.GetFixedWindowLimiter(
+            clientIp,
+            _ => new FixedWindowRateLimiterOptions
+            {
+                Window = TimeSpan.FromMinutes(1),
+                PermitLimit = 5,
+                QueueLimit = 0,
+            });
     });
 });
 
@@ -67,6 +97,7 @@ if (builder.Environment.IsProduction())
 var app = builder.Build();
 
 app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseForwardedHeaders();
 app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
 {
     await ProblemDetailsWriter.WriteAsync(context, new Exception("Unhandled"));

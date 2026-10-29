@@ -131,8 +131,8 @@ Rules:
 | Method | Path | Auth | Request | Response |
 |---|---|---|---|---|
 | `GET` | `/system/info` | none | — | Instance name, version, setup state, auth modes |
-| `GET` | `/system/setup` | none | — | `{required, completed, tokenRequired}` |
-| `POST` | `/system/setup` | setup token | Owner email, password, display name, org name, org slug | `201` session + organization |
+| `GET` | `/system/setup` (and `/api/v1/system/setup`) | none | — | `{required, completed, tokenRequired}` |
+| `POST` | `/system/setup` (and `/api/v1/system/setup`) | setup token | Owner email, password, display name, org name, org slug | `201` session + organization |
 | `GET` | `/system/version` | read | — | Version, commit, build date, schema version |
 | `GET` | `/system/diagnostics` | admin | — | Redacted host, database, Docker, Caddy, disk, version report |
 | `GET` | `/health/live` | none | — | Liveness |
@@ -141,7 +141,7 @@ Rules:
 
 ### 2.1 Setup
 
-`POST /system/setup` is allowed once. It creates the organization, owner, and membership in one transaction, marks setup complete, and returns a session cookie. The setup token is consumed. Repeated calls return `setup.already_complete`.
+`POST /system/setup` (and `/api/v1/system/setup`) is allowed once. It creates the organization, owner, and membership in one transaction, marks setup complete, and returns a session cookie. The setup token is consumed. Once complete, all setup endpoints return `404 Not Found` to mask instance state. Repeated calls return `404`.
 
 ### 2.2 Diagnostics
 

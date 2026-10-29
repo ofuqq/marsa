@@ -32,7 +32,7 @@ public sealed class SetupService : ISetupService
             || await _dbContext.Organizations.AnyAsync(o => o.SetupCompletedAt != null, cancellationToken);
     }
 
-    public async Task<SetupTokenGenerationResult?> GetOrCreateSetupTokenAsync(CancellationToken cancellationToken = default)
+    public async Task<SetupTokenGenerationResult?> GetOrCreateSetupTokenAsync(bool forceRegenerate = false, CancellationToken cancellationToken = default)
     {
         if (await IsSetupCompletedAsync(cancellationToken))
         {
@@ -40,14 +40,27 @@ public sealed class SetupService : ISetupService
         }
 
         var now = DateTimeOffset.UtcNow;
-        var existingToken = await _dbContext.SetupTokens
-            .Where(t => t.UsedAt == null && t.ExpiresAt > now)
-            .OrderByDescending(t => t.CreatedAt)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (existingToken != null)
+        if (!forceRegenerate)
         {
-            return null;
+            var existingToken = await _dbContext.SetupTokens
+                .Where(t => t.UsedAt == null && t.ExpiresAt > now)
+                .OrderByDescending(t => t.CreatedAt)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (existingToken != null && TokenFileExists())
+            {
+                return null;
+            }
+        }
+
+        // Invalidate previous unconsumed tokens upon regeneration or recovery
+        var previousTokens = await _dbContext.SetupTokens
+            .Where(t => t.UsedAt == null)
+            .ToListAsync(cancellationToken);
+
+        foreach (var oldToken in previousTokens)
+        {
+            oldToken.UsedAt = now;
         }
 
         var (tokenEntity, plaintext) = SetupToken.Generate(TimeSpan.FromHours(24));
@@ -64,13 +77,14 @@ public sealed class SetupService : ISetupService
         _dbContext.SetupTokens.Add(record);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
+        var tokenPath = TryWriteRestrictedTokenFile(plaintext);
+
         _logger.LogInformation(
-            "Setup is required. One-time setup token generated (expires at {ExpiresAt:u}).",
-            tokenEntity.ExpiresAt);
+            "Setup is required. One-time setup token generated (expires at {ExpiresAt:u}). Written to restricted file {TokenPath}.",
+            tokenEntity.ExpiresAt,
+            tokenPath ?? "data directory");
 
-        TryWriteRestrictedTokenFile(plaintext);
-
-        return new SetupTokenGenerationResult(plaintext, tokenEntity.ExpiresAt);
+        return new SetupTokenGenerationResult(plaintext, tokenEntity.ExpiresAt, tokenPath);
     }
 
     public async Task<SetupResult> CompleteSetupAsync(SetupCommand command, CancellationToken cancellationToken = default)
@@ -233,7 +247,7 @@ public sealed class SetupService : ISetupService
             || msg.Contains("23505", StringComparison.OrdinalIgnoreCase);
     }
 
-    private static void TryWriteRestrictedTokenFile(string token)
+    private static string? TryWriteRestrictedTokenFile(string token)
     {
         try
         {
@@ -246,11 +260,18 @@ public sealed class SetupService : ISetupService
             {
                 File.SetUnixFileMode(filePath, UnixFileMode.UserRead | UnixFileMode.UserWrite);
             }
+
+            return filePath;
         }
         catch
         {
-            // Fail open if file write fails, console log is primary
+            return null;
         }
+    }
+
+    private static bool TokenFileExists()
+    {
+        return File.Exists("/var/lib/marsa/setup-token") || File.Exists(".marsa/setup-token");
     }
 
     private static void TryDeleteTokenFile()

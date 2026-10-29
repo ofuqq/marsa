@@ -66,10 +66,13 @@ Mitigations in 0.1:
 
 ### 3.1 Setup
 
-- First run generates a one-time setup token, prints it to the host console or install output, and stores only a hash.
-- Setup is rate-limited and audited.
-- The setup token is consumed on success and expires.
-- There is no default password and no unauthenticated "first user wins" path.
+- First run generates a one-time setup token (256 bits of entropy) and stores only a SHA-256 hash in PostgreSQL.
+- The plaintext token is delivered exclusively to a restricted file in the runtime directory (`/var/lib/marsa/setup-token` with mode `0600`). It is NEVER printed to container logs (stdout/stderr) or application log files to prevent exposure in shared log sinks or monitoring pipelines.
+- Setup is rate-limited (5 attempts/minute per client IP) using client IP forwarding validated strictly against configured trusted reverse proxies (Caddy); untrusted callers cannot bypass rate limiting via spoofed `X-Forwarded-For` headers.
+- The setup token is single-use, compared in constant time, and expires after 24 hours.
+- If the token expires before use, or if the operator loses the token file before setup completes, restarting the service with `MARSA_REGENERATE_SETUP_TOKEN=true` (or restarting after expiry) invalidates previous tokens and issues a fresh one without locking out the host operator.
+- Once the first administrator is created, the setup token file is deleted and all setup endpoints return `404 Not Found` to conceal instance state.
+- There is no default password and no unauthenticated "first user wins" path. Concurrent initial setup attempts are bounded to at most one administrator by a database-level singleton constraint.
 
 ### 3.2 Dashboard sessions
 
