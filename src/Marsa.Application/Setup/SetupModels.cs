@@ -17,5 +17,6 @@ public sealed record SetupResult(
 
 public sealed record SetupTokenGenerationResult(
     string PlaintextToken,
-    DateTimeOffset ExpiresAt
+    DateTimeOffset ExpiresAt,
+    string? FilePath = null
 );

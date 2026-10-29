@@ -28,15 +28,30 @@ public sealed class SetupTokenBootstrapService : IHostedService
 
             if (!await setupService.IsSetupCompletedAsync(cancellationToken))
             {
-                var result = await setupService.GetOrCreateSetupTokenAsync(cancellationToken);
-                if (result != null && !string.Equals(Environment.GetEnvironmentVariable("MARSA_SUPPRESS_SETUP_CONSOLE_OUTPUT"), "true", StringComparison.OrdinalIgnoreCase))
+                var forceRegenerate = string.Equals(
+                    Environment.GetEnvironmentVariable("MARSA_REGENERATE_SETUP_TOKEN"),
+                    "true",
+                    StringComparison.OrdinalIgnoreCase);
+
+                var result = await setupService.GetOrCreateSetupTokenAsync(forceRegenerate, cancellationToken);
+                if (result != null)
                 {
-                    Console.WriteLine("================================================================================");
-                    Console.WriteLine("[MARSA FIRST-RUN SETUP]");
-                    Console.WriteLine("Setup is required. One-time setup token:");
-                    Console.WriteLine(result.PlaintextToken);
-                    Console.WriteLine($"Expires at: {result.ExpiresAt:u}. This token can only be used once.");
-                    Console.WriteLine("================================================================================");
+                    var filePath = result.FilePath ?? "data directory (setup-token)";
+                    _logger.LogInformation(
+                        "[MARSA SETUP] Setup is required. One-time setup token written to restricted file '{FilePath}' (mode 0600). Token is NOT printed to logs. Expires at {ExpiresAt:u}.",
+                        filePath,
+                        result.ExpiresAt);
+
+                    if (!string.Equals(Environment.GetEnvironmentVariable("MARSA_SUPPRESS_SETUP_CONSOLE_OUTPUT"), "true", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Console.WriteLine("================================================================================");
+                        Console.WriteLine("[MARSA FIRST-RUN SETUP]");
+                        Console.WriteLine("Setup is required. One-time setup token has been written to the restricted file:");
+                        Console.WriteLine(filePath);
+                        Console.WriteLine($"Expires at: {result.ExpiresAt:u}. File permissions: 0600 (read/write by owner only).");
+                        Console.WriteLine("For security, the token is NEVER printed to container logs or stdout.");
+                        Console.WriteLine("================================================================================");
+                    }
                 }
             }
         }

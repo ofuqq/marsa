@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Marsa.Application.Setup;
 using Marsa.Domain.Setup;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -242,6 +243,106 @@ public sealed class SetupEndpointsTests : IClassFixture<WebApplicationFactory<Pr
         Assert.Equal(HttpStatusCode.TooManyRequests, responses[5].StatusCode);
     }
 
+    [Fact]
+    public async Task GetSetupStatus_ViaApiV1Prefix_ReturnsSameAsRootPath()
+    {
+        var fake = new FakeSetupService { IsCompleted = false };
+        var client = CreateFactoryWithSetupService(fake).CreateClient();
+
+        var response = await client.GetAsync("/api/v1/system/setup");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(json.GetProperty("required").GetBoolean());
+    }
+
+    [Fact]
+    public async Task RateLimiting_BehindTrustedReverseProxy_PartitionsByForwardedClientIp()
+    {
+        var fake = new FakeSetupService { IsCompleted = false };
+        var factory = CreateFactoryWithSetupService(fake).WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureTestServices(services =>
+            {
+                services.AddSingleton<IStartupFilter>(new RemoteIpStartupFilter(IPAddress.Loopback));
+            });
+        });
+        var client = factory.CreateClient();
+
+        // Simulate requests from Client A (forwarded by trusted loopback proxy)
+        for (var i = 0; i < 5; i++)
+        {
+            var req = new HttpRequestMessage(HttpMethod.Get, "/system/setup");
+            req.Headers.Add("X-Forwarded-For", "198.51.100.10");
+            var res = await client.SendAsync(req);
+            Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+        }
+
+        // 6th request from Client A is rate-limited
+        var reqBlocked = new HttpRequestMessage(HttpMethod.Get, "/system/setup");
+        reqBlocked.Headers.Add("X-Forwarded-For", "198.51.100.10");
+        var resBlocked = await client.SendAsync(reqBlocked);
+        Assert.Equal(HttpStatusCode.TooManyRequests, resBlocked.StatusCode);
+
+        // Client B forwarded by the same proxy is in a different partition and NOT blocked
+        var reqClientB = new HttpRequestMessage(HttpMethod.Get, "/system/setup");
+        reqClientB.Headers.Add("X-Forwarded-For", "198.51.100.20");
+        var resClientB = await client.SendAsync(reqClientB);
+        Assert.Equal(HttpStatusCode.OK, resClientB.StatusCode);
+    }
+
+    [Fact]
+    public async Task RateLimiting_WhenUntrustedCallerSpoofsForwardedFor_DoesNotBypassLimiter()
+    {
+        var fake = new FakeSetupService { IsCompleted = false };
+        var factory = CreateFactoryWithSetupService(fake).WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureTestServices(services =>
+            {
+                services.AddSingleton<IStartupFilter>(new RemoteIpStartupFilter(IPAddress.Parse("192.0.2.1")));
+            });
+        });
+        var client = factory.CreateClient();
+
+        // Attacker sends 5 requests with different spoofed X-Forwarded-For headers
+        for (var i = 0; i < 5; i++)
+        {
+            var req = new HttpRequestMessage(HttpMethod.Get, "/system/setup");
+            req.Headers.Add("X-Forwarded-For", $"203.0.113.{i + 1}");
+            var res = await client.SendAsync(req);
+            Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+        }
+
+        // 6th request with another spoofed IP must still be blocked (429) because connection is from untrusted caller
+        var req6 = new HttpRequestMessage(HttpMethod.Get, "/system/setup");
+        req6.Headers.Add("X-Forwarded-For", "203.0.113.99");
+        var res6 = await client.SendAsync(req6);
+        Assert.Equal(HttpStatusCode.TooManyRequests, res6.StatusCode);
+    }
+
+    private sealed class RemoteIpStartupFilter : IStartupFilter
+    {
+        private readonly IPAddress _ip;
+
+        public RemoteIpStartupFilter(IPAddress ip)
+        {
+            _ip = ip;
+        }
+
+        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+        {
+            return app =>
+            {
+                app.Use((context, nextMiddleware) =>
+                {
+                    context.Connection.RemoteIpAddress = _ip;
+                    return nextMiddleware();
+                });
+                next(app);
+            };
+        }
+    }
+
     private sealed class FakeSetupService : ISetupService
     {
         public bool IsCompleted { get; set; }
@@ -255,7 +356,7 @@ public sealed class SetupEndpointsTests : IClassFixture<WebApplicationFactory<Pr
             return Task.FromResult(IsCompleted);
         }
 
-        public Task<SetupTokenGenerationResult?> GetOrCreateSetupTokenAsync(CancellationToken cancellationToken = default)
+        public Task<SetupTokenGenerationResult?> GetOrCreateSetupTokenAsync(bool forceRegenerate = false, CancellationToken cancellationToken = default)
         {
             if (IsCompleted)
             {
@@ -263,7 +364,7 @@ public sealed class SetupEndpointsTests : IClassFixture<WebApplicationFactory<Pr
             }
 
             return Task.FromResult<SetupTokenGenerationResult?>(
-                new SetupTokenGenerationResult(ValidToken, DateTimeOffset.UtcNow.AddHours(24)));
+                new SetupTokenGenerationResult(ValidToken, DateTimeOffset.UtcNow.AddHours(24), "/var/lib/marsa/setup-token"));
         }
 
         public Task<SetupResult> CompleteSetupAsync(SetupCommand command, CancellationToken cancellationToken = default)
